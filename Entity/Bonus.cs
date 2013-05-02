@@ -1,26 +1,27 @@
-﻿using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace monoDoodler.Entity
+﻿namespace monoDoodler.Entity
 {
-    using Properties;
+    using Microsoft.Xna.Framework.Content;
+    using Microsoft.Xna.Framework.Graphics;
+
+    using monoDoodler.Properties;
 
     public sealed class Bonus : PositibleObject
     {
-        public bool DoobleJump { get; set; }
+        public int Duration { get; set; }
 
-        public bool MultFire { get; set; }
+        public BonusType Type { get; set; }
 
         public override void Initialize(ContentManager content)
         {
+            Duration = 200;
             if (Rnd.Next(2) % 2 == 0)
             {
-                DoobleJump = true;
+                Type = BonusType.DoobleJump;
                 Image = content.Load<Texture2D>("Graphics\\doubleJump");
             }
             else
             {
-                MultFire = true;
+                Type = BonusType.MultFire;
                 Image = content.Load<Texture2D>("Graphics\\SBonus");
             }
 

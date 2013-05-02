@@ -1,9 +1,9 @@
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-
 namespace monoDoodler.Entity
 {
-    using Properties;
+    using Microsoft.Xna.Framework.Content;
+    using Microsoft.Xna.Framework.Graphics;
+
+    using monoDoodler.Properties;
 
     public sealed class Doodle : PositibleObject
     {

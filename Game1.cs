@@ -1,209 +1,207 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using monoDoodler.Entity;
-using monoDoodler.Manager;
-
-namespace monoDoodler
+﻿namespace monoDoodler
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
+    using System;
+    using System.Collections.Generic;
+
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
+    using Microsoft.Xna.Framework.Input;
+
+    using monoDoodler.Entity;
+    using monoDoodler.Manager;
+
     public class Game1 : Game
     {
-        GraphicsDeviceManager _graphics;
-
-        KeyboardState currentKeyboardState;
-
-        SpriteBatch _spriteBatch;
-
         private const int DefaultDoodleSpeedX = 10;
 
-        private Doodle _myDoodle;
+        private readonly GraphicsDeviceManager graphics;
 
-        private PlatformManager _platformManager;
+        private KeyboardState currentKeyboardState;
 
-        private BonusManager _bonusManager;
+        private SpriteBatch spriteBatch;
 
-        private BulletManager _bulletManager;
+        private Doodle myDoodle;
 
-        private EnemyManager _enemyManager;
+        private PlatformManager platformManager;
 
-        private int _mouseX;
+        private BonusManager bonusManager;
 
-        private int _score;
+        private BulletManager bulletManager;
 
-        private bool _pressedGoToRight;
+        private EnemyManager enemyManager;
 
-        private bool _pressedGoToLeft;
+        private int mouseX;
 
-        private bool _pressedFire;
+        private int score;
+
+        private bool pressedGoToRight;
+
+        private bool pressedGoToLeft;
+
+        private bool pressedFire;
 
         public Game1()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            this.graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
-            _myDoodle = new Doodle();
-            _score = 0;
-            _myDoodle = new Doodle();
-            _platformManager = new PlatformManager();
-            _bonusManager = new BonusManager();
-            _bulletManager = new BulletManager();
-            _enemyManager = new EnemyManager();
-            Properties.Settings.MonitorHeight = GraphicsDevice.Viewport.TitleSafeArea.Height;
-            Properties.Settings.MonitorWigth =  GraphicsDevice.Viewport.TitleSafeArea.Width;
-
+            this.graphics.IsFullScreen = true;
+            this.score = 0;
+            this.myDoodle = new Doodle();
+            this.myDoodle = new Doodle();
+            this.platformManager = new PlatformManager();
+            this.bonusManager = new BonusManager();
+            this.bulletManager = new BulletManager();
+            this.enemyManager = new EnemyManager();
+            Properties.Settings.MonitorHeight = this.graphics.GraphicsDevice.DisplayMode.Height;
+            Properties.Settings.MonitorWigth = this.graphics.GraphicsDevice.DisplayMode.Width;
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _myDoodle.Initialize(Content);
-            _platformManager.Initialize(Content);
-            _bonusManager.Initialize(Content);
-            _bulletManager.Initialize(Content);
-            _enemyManager.Initialize(Content);
-
-        }
-        private void RefreshKeyBoard()
-        {
-                _pressedGoToLeft = false;
-                _pressedGoToRight = false;
-                _pressedFire = false;
-
-            if (currentKeyboardState.IsKeyDown(Keys.Left) || currentKeyboardState.IsKeyDown(Keys.A))
-            {
-                _pressedGoToLeft = true;
-            }
-             if (currentKeyboardState.IsKeyDown(Keys.Right) || currentKeyboardState.IsKeyDown(Keys.D))
-            {
-                _pressedGoToRight = true;
-            }
-             if (currentKeyboardState.IsKeyDown(Keys.Space) || currentKeyboardState.IsKeyDown(Keys.Up)
-                || currentKeyboardState.IsKeyDown(Keys.W))
-            {
-                _pressedFire = true;
-            }
-
+            this.spriteBatch = new SpriteBatch(GraphicsDevice);
+            this.myDoodle.Initialize(Content);
+            this.platformManager.Initialize(Content);
+            this.bonusManager.Initialize(Content);
+            this.bulletManager.Initialize(Content);
+            this.enemyManager.Initialize(Content);
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 Exit();
             }
-            currentKeyboardState = Keyboard.GetState();
+
             RefreshKeyBoard();
 
-            if (_pressedFire && gameTime.TotalGameTime.Milliseconds % 7 == 0)
+            if (this.pressedFire)
             {
-                _bulletManager.Fire(_myDoodle, _bonusManager.MultiFireIsActive(), Content);
+                this.bulletManager.Fire(this.myDoodle, this.bonusManager.BonusIsActive(BonusType.MultFire), Content);
             }
 
-            if (_enemyManager.KillEnemy(_bulletManager.List))
+            if (this.enemyManager.KillEnemy(this.bulletManager.List))
             {
-                _score += 50;
+                this.score += 50;
             }
 
-          //  _enemyManager.KillDoodle(_myDoodle);
+            if (enemyManager.KillDoodle(myDoodle))
+            {
+                this.GameOver();
+            }
 
-            _bonusManager.IsTakenBonus(_myDoodle);
+            this.bonusManager.IsTakenBonus(this.myDoodle);
 
-            _bonusManager.TimeRefresh();
+            this.bonusManager.TimeRefresh();
 
             float strenge;
-            if (_platformManager.StendToPlatfotm(_myDoodle, out strenge))
+            if (this.platformManager.StendToPlatfotm(this.myDoodle, out strenge))
             {
-                if (_bonusManager.DoobleJumpIsActive())
+                if (this.bonusManager.BonusIsActive(BonusType.DoobleJump))
                 {
                     strenge *= 1.5F;
                 }
 
-                _myDoodle.Jamp(strenge);
+                this.myDoodle.Jamp(strenge);
             }
 
-            if (_pressedGoToLeft)
+            if (this.pressedGoToLeft)
             {
-                _myDoodle.MooveX(-DefaultDoodleSpeedX);
+                this.myDoodle.MooveX(-DefaultDoodleSpeedX);
             }
-            else if (_pressedGoToRight)
+            else if (this.pressedGoToRight)
             {
-                _myDoodle.MooveX(DefaultDoodleSpeedX);
+                this.myDoodle.MooveX(DefaultDoodleSpeedX);
             }
 
-            _bulletManager.Moove();
-            _enemyManager.Moove();
-            _platformManager.Moove();
+            this.bulletManager.Moove();
+            this.enemyManager.Moove();
+            this.platformManager.Moove();
+            this.enemyManager.ReInitIfOutMonitor(Content);
+            this.platformManager.ReInitIfOutMonitor(Content);
 
-            _myDoodle.AccelerationY--;
-            if (_myDoodle.Position.Y < Properties.Settings.MonitorHeight / 2F && _myDoodle.AccelerationY > 0)
+            this.myDoodle.AccelerationY--;
+            if (this.myDoodle.Position.Y < Properties.Settings.MonitorHeight / 2F && this.myDoodle.AccelerationY > 0)
             {
-                _platformManager.WindowMooveY(_myDoodle.AccelerationY, Content);
-                _enemyManager.WindowMooveY(_myDoodle.AccelerationY, Content);
-                _bonusManager.WindowMooveY(_myDoodle.AccelerationY, Content);
-                _score++;
+                this.platformManager.WindowMooveY(this.myDoodle.AccelerationY, Content);
+                this.enemyManager.WindowMooveY(this.myDoodle.AccelerationY, Content);
+                this.bonusManager.WindowMooveY(this.myDoodle.AccelerationY, Content);
+                this.score++;
             }
             else
             {
-                _myDoodle.MooveY();
+                this.myDoodle.MooveY();
             }
 
-            if (_myDoodle.Position.Y > Properties.Settings.MonitorHeight)
+            if (this.myDoodle.Position.Y > Properties.Settings.MonitorHeight)
             {
-          //      GameOver();
+                GameOver();
             }
 
-            if (gameTime.TotalGameTime.Seconds % 7 % 40 == 0)
+            if (Math.Abs(gameTime.TotalGameTime.Milliseconds % 10000 - 0) < 20)
             {
-                _enemyManager.AddItem(Content);
+                this.enemyManager.AddItem(Content);
             }
 
-            if (gameTime.TotalGameTime.Seconds % 7 % 100 == 0)
+            if (Math.Abs(gameTime.TotalGameTime.Milliseconds % 20000 - 0) < 20)
             {
-                _bonusManager.AddItem(Content);
+                this.bonusManager.AddItem(Content);
             }
 
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            _spriteBatch.Begin();
-            _platformManager.Draw(_spriteBatch);
-            _bonusManager.Draw(_spriteBatch);
-            _bulletManager.Draw(_spriteBatch);
-            _enemyManager.Draw(_spriteBatch);
-            _myDoodle.Draw(_spriteBatch);
-            _spriteBatch.End();
-
+            this.spriteBatch.Begin();
+            this.platformManager.Draw(this.spriteBatch);
+            this.bonusManager.Draw(this.spriteBatch);
+            this.bulletManager.Draw(this.spriteBatch);
+            this.enemyManager.Draw(this.spriteBatch);
+            this.myDoodle.Draw(this.spriteBatch);
+            this.spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        private void GameOver()
+        { 
+            platformManager.List = new List<Platform>();
+            enemyManager.List = new List<Enemy>();
+            this.myDoodle.Initialize(Content);
+            enemyManager.Initialize(Content);
+            platformManager.Initialize(Content);
+           
+        }
+
+        private void RefreshKeyBoard()
+        {
+            currentKeyboardState = Keyboard.GetState();
+            this.pressedGoToLeft = false;
+            this.pressedGoToRight = false;
+            this.pressedFire = false;
+
+            if (currentKeyboardState.IsKeyDown(Keys.Left) || currentKeyboardState.IsKeyDown(Keys.A))
+            {
+                this.pressedGoToLeft = true;
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Right) || currentKeyboardState.IsKeyDown(Keys.D))
+            {
+                this.pressedGoToRight = true;
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Space) || currentKeyboardState.IsKeyDown(Keys.Up)
+               || currentKeyboardState.IsKeyDown(Keys.W))
+            {
+                this.pressedFire = true;
+            }
         }
     }
 }

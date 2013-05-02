@@ -1,9 +1,10 @@
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using monoDoodler.Properties;
-
 namespace monoDoodler.Entity
 {
+    using Microsoft.Xna.Framework.Content;
+    using Microsoft.Xna.Framework.Graphics;
+
+    using monoDoodler.Properties;
+
     public sealed class Platform : PositibleObject
     {
         public int Strange { get; set; }

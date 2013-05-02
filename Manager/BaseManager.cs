@@ -1,12 +1,13 @@
-﻿using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace monoDoodler.Manager
+﻿namespace monoDoodler.Manager
 {
     using System;
     using System.Collections.Generic;
-    using Entity;
-    using Properties;
+
+    using Microsoft.Xna.Framework.Content;
+    using Microsoft.Xna.Framework.Graphics;
+
+    using monoDoodler.Entity;
+    using monoDoodler.Properties;
 
     public abstract class BaseManager<T> where T : PositibleObject
     {
@@ -22,11 +23,14 @@ namespace monoDoodler.Manager
             List.ForEach(x => x.Draw(spriteBatch));
         }
 
-        public void WindowMooveY(float doodleSpeed,ContentManager content)
+        public void WindowMooveY(float doodleSpeed, ContentManager content)
         {
             List.ForEach(x => x.Position.Y += doodleSpeed);
+        }
 
-            foreach (var item in List)
+        public void ReInitIfOutMonitor(ContentManager content)
+        {
+            foreach (var item in this.List)
             {
                 if (item.Position.Y > Settings.MonitorHeight)
                 {
@@ -43,11 +47,11 @@ namespace monoDoodler.Manager
         /// </returns>
         public bool HideComplided()
         {
-            const int hideSpeed = 40;
+            const int HideSpeed = 40;
             var disposeCancel = true;
             foreach (var item in List)
             {
-                item.Position.Y -= hideSpeed;
+                item.Position.Y -= HideSpeed;
                 if (item.Position.Y > 0)
                 {
                     disposeCancel = false;
@@ -64,7 +68,7 @@ namespace monoDoodler.Manager
             List.Add(instance);
         }
 
-        public virtual void  Initialize(ContentManager content)
+        public virtual void Initialize(ContentManager content)
         {
             List.ForEach(x => x.Initialize(content));
         }

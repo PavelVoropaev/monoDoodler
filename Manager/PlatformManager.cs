@@ -12,7 +12,7 @@ namespace monoDoodler.Manager
     {
         public override void Initialize(ContentManager content)
         {
-            for (var tempPosY = 0; tempPosY < Settings.MonitorHeight; tempPosY += 15)
+            for (var tempPosY = 0; tempPosY < Settings.MonitorHeight; tempPosY += 7)
             {
                 var platform = new Platform();
                 platform.Initialize(content);

@@ -1,8 +1,8 @@
-﻿using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace monoDoodler.Entity
+﻿namespace monoDoodler.Entity
 {
+    using Microsoft.Xna.Framework.Content;
+    using Microsoft.Xna.Framework.Graphics;
+
     public class Bullet : PositibleObject
     {
         public int SpeedX { get; set; }

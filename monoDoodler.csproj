@@ -64,6 +64,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Entity\Bonus.cs" />
+    <Compile Include="Entity\BonusType.cs" />
     <Compile Include="Entity\Bullet.cs" />
     <Compile Include="Entity\Doodle.cs" />
     <Compile Include="Entity\Enemy.cs" />

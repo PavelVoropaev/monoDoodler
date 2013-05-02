@@ -1,13 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-
-namespace monoDoodler.Manager
+﻿namespace monoDoodler.Manager
 {
     using System.Collections.Generic;
     using System.Linq;
 
-    using Entity;
-    using Properties;
+    using Microsoft.Xna.Framework;
+
+    using monoDoodler.Entity;
+    using monoDoodler.Properties;
 
     public class EnemyManager : BaseManager<Enemy>
     {
@@ -20,12 +19,12 @@ namespace monoDoodler.Manager
         {
             foreach (var bullet in bulletList)
             {
-              foreach (var enemy in List.Where(enemy => !Rectangle.Intersect(bullet.Rectangle, enemy.Rectangle).IsEmpty))
-              {
-                  List.Remove(enemy);
-                  bulletList.Remove(bullet);
-                  return true;
-              }
+                foreach (var enemy in List.Where(enemy => !Rectangle.Intersect(bullet.Rectangle, enemy.Rectangle).IsEmpty))
+                {
+                    List.Remove(enemy);
+                    bulletList.Remove(bullet);
+                    return true;
+                }
             }
 
             return false;
@@ -38,14 +37,7 @@ namespace monoDoodler.Manager
         /// <returns>Были ли попадания в Дудла?</returns>
         public bool KillDoodle(Doodle doodle)
         {
-           if (List.Any(enemy => !Rectangle.Intersect(doodle.Rectangle, enemy.Rectangle).IsEmpty))
-           {
-               doodle.Position.Y = 3000;
-               doodle.Position.X = 3000;
-               return true;
-           }
-
-            return false;
+            return this.List.Any(enemy => !Rectangle.Intersect(doodle.Rectangle, enemy.Rectangle).IsEmpty);
         }
 
         public void Moove()
@@ -60,11 +52,6 @@ namespace monoDoodler.Manager
                 }
 
                 enemy.Position.Y += enemy.SpeedY;
-                if (enemy.Position.Y > Settings.MonitorWigth)
-                {
-                    enemy.Position.Y = 0;
-                    enemy.Position.X = enemy.Rnd.Next(0, Settings.MonitorWigth - 30);
-                }
             }
         }
     }
