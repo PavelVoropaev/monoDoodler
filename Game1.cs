@@ -38,6 +38,10 @@
 
         private bool pressedGoToLeft;
 
+        private bool pressedGoToUp;
+
+        private bool pressedGoToDown;
+
         private bool pressedFire;
 
         public Game1()
@@ -73,7 +77,8 @@
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
+                || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 Exit();
             }
@@ -95,9 +100,12 @@
                 this.GameOver();
             }
 
-            this.bonusManager.IsTakenBonus(this.myDoodle);
+            this.bonusManager.IsTakenBonus(this.myDoodle, Content);
 
-            this.bonusManager.TimeRefresh();
+            if (bonusManager.TimeRefresh().Exists(x => x.Type == BonusType.FlyDoodler))
+            {
+                myDoodle.SetFlySkyn(false, Content);
+            }
 
             float strenge;
             if (this.platformManager.StendToPlatfotm(this.myDoodle, out strenge))
@@ -126,7 +134,23 @@
             this.platformManager.ReInitIfOutMonitor(Content);
 
             this.myDoodle.AccelerationY--;
-            if (this.myDoodle.Position.Y < Properties.Settings.MonitorHeight / 2F && this.myDoodle.AccelerationY > 0)
+
+
+            if (bonusManager.BonusIsActive(BonusType.FlyDoodler))
+            {
+                this.myDoodle.AccelerationY = 5;
+                if (pressedGoToDown)
+                {
+                    myDoodle.MooveY(-5);
+                }
+                if (pressedGoToUp)
+                {
+                    myDoodle.MooveY(5);
+                }
+            }
+
+            if ((this.myDoodle.Position.Y < Properties.Settings.MonitorHeight / 2F && this.myDoodle.AccelerationY > 0)
+                        || bonusManager.BonusIsActive(BonusType.FlyDoodler))
             {
                 this.platformManager.WindowMooveY(this.myDoodle.AccelerationY, Content);
                 this.enemyManager.WindowMooveY(this.myDoodle.AccelerationY, Content);
@@ -135,7 +159,7 @@
             }
             else
             {
-                this.myDoodle.MooveY();
+                this.myDoodle.MoveGravity();
             }
 
             if (this.myDoodle.Position.Y > Properties.Settings.MonitorHeight)
@@ -148,7 +172,7 @@
                 this.enemyManager.AddItem(Content);
             }
 
-            if (Math.Abs(gameTime.TotalGameTime.Milliseconds % 20000 - 0) < 20)
+            if (Math.Abs(gameTime.TotalGameTime.Milliseconds % 10000 - 0) < 20)
             {
                 this.bonusManager.AddItem(Content);
             }
@@ -171,13 +195,11 @@
         }
 
         private void GameOver()
-        { 
-            platformManager.List = new List<Platform>();
-            enemyManager.List = new List<Enemy>();
+        {
+            bonusManager.Initialize(Content);
             this.myDoodle.Initialize(Content);
             enemyManager.Initialize(Content);
             platformManager.Initialize(Content);
-           
         }
 
         private void RefreshKeyBoard()
@@ -186,6 +208,8 @@
             this.pressedGoToLeft = false;
             this.pressedGoToRight = false;
             this.pressedFire = false;
+            this.pressedGoToDown = false;
+            this.pressedGoToUp = false;
 
             if (currentKeyboardState.IsKeyDown(Keys.Left) || currentKeyboardState.IsKeyDown(Keys.A))
             {
@@ -197,8 +221,19 @@
                 this.pressedGoToRight = true;
             }
 
-            if (currentKeyboardState.IsKeyDown(Keys.Space) || currentKeyboardState.IsKeyDown(Keys.Up)
-               || currentKeyboardState.IsKeyDown(Keys.W))
+            if (currentKeyboardState.IsKeyDown(Keys.Up) || currentKeyboardState.IsKeyDown(Keys.W))
+            {
+                this.pressedGoToUp = true;
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Down) || currentKeyboardState.IsKeyDown(Keys.S))
+             
+            {
+                this.pressedGoToDown = true;
+            }
+
+
+            if (currentKeyboardState.IsKeyDown(Keys.Space))
             {
                 this.pressedFire = true;
             }

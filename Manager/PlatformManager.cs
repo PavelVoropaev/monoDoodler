@@ -1,17 +1,19 @@
-﻿using Microsoft.Xna.Framework.Content;
-
-namespace monoDoodler.Manager
+﻿namespace monoDoodler.Manager
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
-    using Entity;
-    using Properties;
+    using Microsoft.Xna.Framework.Content;
+
+    using monoDoodler.Entity;
+    using monoDoodler.Properties;
 
     public class PlatformManager : BaseManager<Platform>
     {
         public override void Initialize(ContentManager content)
         {
+            base.Initialize(content);
             for (var tempPosY = 0; tempPosY < Settings.MonitorHeight; tempPosY += 7)
             {
                 var platform = new Platform();

@@ -114,6 +114,12 @@
     <Content Include="Content\Graphics\Enemy.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Graphics\FlyDoodler.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Graphics\FlyDoodlerBonus.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Graphics\GreenPlatform.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

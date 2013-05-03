@@ -4,16 +4,18 @@
     using System.Linq;
 
     using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Content;
 
     using monoDoodler.Entity;
 
     public class BonusManager : BaseManager<Bonus>
     {
-        private readonly List<Bonus> activeBonusList;
+        private List<Bonus> activeBonusList;
 
-        public BonusManager()
+        public override void Initialize(ContentManager content)
         {
-            this.activeBonusList = new List<Bonus>();
+            activeBonusList = new List<Bonus>();
+            base.Initialize(content);
         }
 
         /// <summary>
@@ -21,11 +23,24 @@
         /// </summary>
         /// <param name="doodle">Дудл</param>
         /// <returns>Взял ли дудл бонус?</returns>
-        public bool IsTakenBonus(Doodle doodle)
+        public bool IsTakenBonus(Doodle doodle, ContentManager content)
         {
             foreach (var bonus in List.Where(bonus => !Rectangle.Intersect(doodle.Rectangle, bonus.Rectangle).IsEmpty))
             {
-                this.activeBonusList.Add(bonus);
+                if (activeBonusList.Exists(x => x.Type == bonus.Type))
+                {
+                    this.activeBonusList.FirstOrDefault(x => x.Type == bonus.Type).Duration += bonus.Duration;
+                }
+                else
+                {
+                    this.activeBonusList.Add(bonus);
+                }
+                
+                if (bonus.Type == BonusType.FlyDoodler)
+                {
+                    doodle.SetFlySkyn(true, content);
+                }
+
                 List.Remove(bonus);
                 return true;
             }
@@ -41,10 +56,15 @@
         /// <summary>
         /// Удалить бонусы из активных если их действие закончилось
         /// </summary>
-        public void TimeRefresh()
+        /// <returns>
+        /// Удаленные бонусы
+        /// </returns>
+        public List<Bonus> TimeRefresh()
         {
             activeBonusList.ForEach(x => x.Duration--);
+            var removedBonuses = activeBonusList.Where(x => x.Duration <= 0).ToList();
             activeBonusList.RemoveAll(x => x.Duration <= 0);
+            return removedBonuses;
         }
     }
 }

@@ -11,11 +11,6 @@
 
     public abstract class BaseManager<T> where T : PositibleObject
     {
-        protected BaseManager()
-        {
-            List = new List<T>();
-        }
-
         protected internal List<T> List { get; set; }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -70,6 +65,7 @@
 
         public virtual void Initialize(ContentManager content)
         {
+            List = new List<T>();
             List.ForEach(x => x.Initialize(content));
         }
     }

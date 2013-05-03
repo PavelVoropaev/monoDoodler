@@ -10,6 +10,11 @@
         /// <summary>
         /// Выпускает 3 пули за раз
         /// </summary>
-        MultFire
+        MultFire,
+
+        /// <summary>
+        /// Даёт возможность летать
+        /// </summary>
+        FlyDoodler
     }
 }

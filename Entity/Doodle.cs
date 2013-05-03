@@ -20,7 +20,12 @@ namespace monoDoodler.Entity
             AccelerationY = strange;
         }
 
-        public void MooveY()
+        public void MooveY(int speed)
+        {
+            Position.Y -= speed;
+        }
+
+        public void MoveGravity()
         {
             Position.Y -= AccelerationY;
         }
@@ -46,6 +51,11 @@ namespace monoDoodler.Entity
             Position.Y = Settings.MonitorHeight / 3f;
             Position.X = Settings.MonitorWigth / 3f;
             AccelerationY = -2;
+        }
+
+        public void SetFlySkyn(bool fly, ContentManager content)
+        {
+            Image = content.Load<Texture2D>(fly ? "Graphics\\FlyDoodler" : "Graphics\\Doodle");
         }
     }
 }

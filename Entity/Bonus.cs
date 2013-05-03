@@ -13,11 +13,16 @@
 
         public override void Initialize(ContentManager content)
         {
-            Duration = 200;
-            if (Rnd.Next(2) % 2 == 0)
+            Duration = 350;
+            if (Rnd.Next(3) % 2 == 0)
             {
                 Type = BonusType.DoobleJump;
                 Image = content.Load<Texture2D>("Graphics\\doubleJump");
+            }
+            else if (Rnd.Next(3) % 3 == 0)
+            {
+                Type = BonusType.FlyDoodler;
+                Image = content.Load<Texture2D>("Graphics\\FlyDoodlerBonus");
             }
             else
             {
